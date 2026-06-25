@@ -1,0 +1,588 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body{
+    background: #000;
+    color: white;
+}
+/* 헤더 */
+
+header {
+    width: 100%;
+    padding: 10px 0;
+    display: flex; flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: #0a0a0a;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.logo {
+    margin-left: 280px;
+}
+
+.logo img {
+    width: 70px;
+    height: 70px;
+    align-items: center;
+}
+
+header nav {
+    margin-right: 310px;
+    display: flex;
+    gap: 20px;
+}
+
+header nav a {
+    font-size: 18px;
+    font-weight: 500;
+    color: white;
+    transition: color 0.3s ease;
+}
+
+header nav a:nth-child(3) {
+    color: #00ff00;
+}
+
+header nav a:hover {
+    transform: translateY(-2px);
+
+}
+/* 기수 */
+.generation {
+    text-align: center;
+    margin: 0px 0 20px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.generation h3 {
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.generation h4 {
+    position: absolute;
+    right: 60px;
+    font-size: 17px;
+    font-weight: 400;
+    cursor: pointer;
+    margin-right: 240px;
+}
+
+
+/* 카드 */
+
+#content {
+    width: 1250px;
+    margin: 0 auto;
+    padding: 0 60px;
+}
+
+
+.Protfolio-card {
+    background: #333333;
+    border-radius: 12px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+.Protfolio-card:hover {
+    transform: translateY(-2px);
+}
+
+.Protfolio-card:hover img {
+    transform: scale(1.04);
+}
+
+/* 로고 */
+
+.Protfolio-card img {
+    width: 150px;
+    height: 110px;
+
+    background: white;
+
+    border-radius: 6px;
+
+    padding: 10px;
+}
+
+/* 내용 */
+
+.info {
+    flex: 1;
+    margin-left: -10px;
+}
+
+.info h2 {
+    font-size: 24px;
+    font-weight: 450;
+}
+
+.info p {
+    color: #C6C6C6;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+
+/* 이름 태그 */
+
+.member-name {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.name {
+    background: #898989;
+
+    color: black;
+
+    padding: 2px 8px;
+
+    border-radius: 5px;
+
+    font-size: 15px;
+}
+
+.name.leader {
+    background: #2188B6;
+    color: #F8F9FD;
+}
+
+/* 햄버거 */
+.menu-trigger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 10px;
+    margin-bottom: 100px;
+;}
+
+.menu-trigger span {
+    width: 23px;
+    height: 2px;
+    background-color: rgb(117, 117, 117);
+    border-radius: 2px;
+    transition: transform 0.3s ease;
+    
+}
+
+.Protfolio-card:hover .menu-trigger span:nth-child(3) {
+    transform-origin: right;
+    transform: scaleX(0.5);  /* 오른쪽 반 사라짐 */
+}
+
+.Protfolio-card:hover .menu-trigger span:nth-child(1) {
+    transform-origin: left;
+    transform: scaleX(0.5);  /* 왼쪽 반 사라짐 */
+}
+
+/* footer */
+footer {
+    margin-top: 80px;
+    background: #333333;
+    border-top: 1px solid #333;
+}
+
+.footer-top {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 40px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.method {
+    font-size: 14px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+.method:hover{
+    transform: translateY(-2px);
+
+}
+
+.socials {
+    display: flex;
+    gap: 9px;
+    margin-bottom: 20px;
+}
+
+.socials img {
+    width: 35px;
+    height: 35px;
+    background: rgb(83, 83, 83);
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.socials a {
+    transition: transform 0.3s ease;
+}
+
+.socials a:hover {
+    transform: translateY(-2px);
+}
+
+.mail {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mail img {
+    width: 30px;
+    height: 30px;
+}
+
+.mail span {
+    font-size: 13px;
+    color: #ffffff;
+}
+
+.mail span:hover{
+    transform: translateY(-2px);
+}
+.mail a:hover{
+    transform: translateY(-2px);
+
+}
+
+.footer-nav {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: 50px;
+    padding: 0 80px;
+
+}
+
+.footer-nav a {
+    font-size: 14px;
+    color: white;
+    border-right: 0.6px solid #666;
+    padding-right: 20px;
+}
+.footer-nav a:last-child {
+    border-right: none;
+}
+
+.footer-nav a:hover {
+    transform: translateY(-2px);
+}
+
+.footer-inner {
+    text-align: center;
+    background-color: #292929;
+    padding: 20px 0;
+}
+
+.footer-inner p {
+    font-size: 13px;
+    color: #B4B4B4;
+}
+
+/* 반응형 디자인 */
+/* 1400px*/
+@media (min-width: 1400px) {
+    header {
+        padding: 5px 0px 5px;
+        
+    }
+
+    .logo {
+        margin-left: 290px;
+    }
+
+    header nav {
+        margin-right: 310px;
+        gap: 20px;
+    }
+
+    #content {
+        max-width: 1250px;
+        padding: 0 80px;
+    }
+
+    .generation h4 {
+        right: 80px;
+    }
+
+    .footer-top {
+        max-width: 1250px;
+        padding: 50px 80px;
+    }
+}
+
+/* 1024px */
+@media (max-width: 1024px) {
+    header {
+        padding: 10px 0;
+    }
+
+    .logo {
+        margin-left: 30px;
+    }
+
+    header nav {
+        margin-right: 50px;
+        gap: 20px;
+    }
+
+    header nav a {
+        font-size: 20px;
+    }
+
+    #content {
+        max-width: 1000px;
+        padding: 0 50px;
+    }
+
+    .generation {
+        margin: 0px 0 15px;
+    }
+
+    .generation h3 {
+        font-size: 24px;
+    }
+
+    .generation h4 {
+        font-size: 16px;
+        margin-right: 0px;
+    }
+
+    .Protfolio-card {
+        gap: 25px;
+        padding: 22px 28px;
+    }
+
+    .Protfolio-card img {
+        width: 130px;
+        height: 100px;
+    }
+
+    .info h2 {
+        font-size: 25px;
+    }
+
+    .info p {
+        font-size: 15px;
+    }
+
+    .footer-top {
+        max-width: 900px;
+        padding: 30px ;
+        flex-direction: column;        
+        justify-content: center;      
+        align-items: center;                            
+        text-align: center;            
+    }
+    .method{
+        margin-right: 100px;
+    }
+    .footer-nav {
+        justify-content: center; 
+    }
+}
+
+/* 768px */
+@media (max-width: 768px) {
+     header {
+        padding: 18px 0;
+    }
+
+    .logo {
+        margin-left: 40px;
+    }
+
+    header nav {
+        display: none;
+        
+    }
+
+    
+    /* 햄버거 */
+    .menu-trigger {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        cursor: pointer;
+        padding: 10px;
+        margin-bottom: 100px;
+    ;}
+
+    .menu-trigger span {
+        width: 23px;
+        height: 2px;
+        background-color: rgb(117, 117, 117);
+        border-radius: 2px;
+        transition: transform 0.3s ease;
+        
+    }
+
+    .Protfolio-card:hover .menu-trigger span:nth-child(3) {
+        transform-origin: right;
+        transform: scaleX(0.5);  /* 오른쪽 반 사라짐 */
+    }
+    .Protfolio-card:hover .menu-trigger span:nth-child(1) {
+    transform-origin: left;
+    transform: scaleX(0.5);  /* 왼쪽 반 사라짐 */
+    } 
+    #content {
+        max-width: 800px;
+        padding: 0 10px;
+    }
+
+    .generation h3 {
+        font-size: 25px;
+    }
+
+    .generation h4 {
+        right: 40px;
+    }
+
+    .Protfolio-card {
+        gap: 22px;
+        padding: 20px 26px;
+    }
+
+    .Protfolio-card img {
+        width: 120px;
+        height: 95px;
+    }
+
+    .info h2 {
+        font-size: 24px;
+    }
+
+    .info p {
+        font-size: 18px;
+    }
+
+    .footer-top {
+        max-width: 900px;
+        padding: 38px 40px;
+    }
+
+    .footer-nav {
+        display: none;
+        justify-content: center; 
+    }
+}
+
+/* 480px */
+@media (max-width: 480px) {
+
+    /* 헤더 */
+    .logo {
+        margin-left: 20px;
+    }
+
+    header {
+        padding: 15px 0;
+    }
+
+    /* 컨텐츠 영역 */
+    #content {
+        width: 100%;
+        padding: 0 15px;
+    }
+
+    /* 카드 */
+    .Protfolio-card {
+        /* display: grid;
+        grid-template-columns: 1fr; */
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        height: auto;
+        min-height: auto;
+
+        padding: 30px 20px;
+        gap: 20px;
+    }
+
+    /* 카드 이미지 */
+    .Protfolio-card img {
+        width: 220px;
+        height: auto;
+        margin-bottom: 0;
+    }
+
+    /* 설명 */
+    .info {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .info h2 {
+        font-size: 28px;
+        margin-bottom: 12px;
+    }
+
+    .info p {
+        font-size: 16px;
+        line-height: 1.5;
+
+        white-space: normal;
+        word-break: keep-all;
+    }
+
+    /* 이름 태그 */
+    .member-name {
+        justify-content: center;
+        margin-top: 15px;
+    }
+
+    .name {
+        font-size: 14px;
+    }
+
+    /* 햄버거 메뉴 */
+    .menu-trigger {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+
+        margin-bottom: 0;
+    }
+
+    /* 푸터 */
+    .footer-nav {
+        display: none;
+    }
+
+    .footer-top {
+        padding: 30px 20px;
+        text-align: center;
+    }
+
+    .method {
+        margin-right: 0;
+    }
+
+}
