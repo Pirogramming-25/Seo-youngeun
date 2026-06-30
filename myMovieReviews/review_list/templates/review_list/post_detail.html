@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'review_list/reset.css' %}"> 
+    <link rel="stylesheet" href="{% static 'review_list/style.css' %}">
+    <title>Movie Detail</title>
+</head>
+<body>
+    <header class="site-header">
+        <a class="site-title" href="{% url 'review_list:post_list' %}">MyMovieReviews🎬</a>
+        <a class="create-review" href="{% url 'review_list:post_create' %}">Add a New Review</a>
+    </header>
+
+    <main class="page">
+    <h1 class="detail-title">{{ post.title }}</h1>
+
+    <div class="detail-actions">
+      <a href="{% url 'review_list:post_update' post.pk %}">수정</a>
+
+      <form action="{% url 'review_list:post_delete' post.pk %}" method="post">
+        {% csrf_token %}
+        <button type="submit">삭제</button>
+      </form>
+    </div>
+
+    <section class="detail-info">
+      <p><strong>개봉년도</strong> {{ post.release_year }}년</p>
+      <p><strong>감독</strong> {{ post.director }}</p>
+      <p><strong>주연</strong> {{ post.actors }}</p>
+      <p><strong>장르</strong> {{ post.genre }}</p>
+      <p><strong>별점</strong> {{ post.rating }}</p>
+      <p><strong>러닝타임</strong> {{ post.running_time }}분</p>
+    </section>
+
+    <section class="review-content">
+      {{ post.review_content }}
+    </section>
+  </main>
+</body>
+</html>
