@@ -1,0 +1,18 @@
+<h1>my Movie reviews</h1>
+
+<a href="{% url 'review_list:post_create' %}">리뷰 작성</a>
+
+{% for post in posts %}
+  <div>
+    <h2>
+      <a href="{% url 'review_list:post_detail' post.pk %}">
+        {{ post.title }}
+      </a>
+    </h2>
+    <p>개봉 년도: {{ post.release_year }}</p>
+    <p>장르: {{ post.genre }}</p>
+    <p>별점: {{ post.rating }}</p>
+  </div>
+{% empty %}
+  <p>아직 작성한 리뷰가 없습니다.</p>
+{% endfor %}
