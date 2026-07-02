@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'review_list/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'review_list/style.css' %}">
+    <title>Moive Form</title>
+</head>
+<body>
+
+    <header class="site-header">
+        <a class="site-title" href="{% url 'review_list:post_list' %}">MyMovieReviews🎬</a>
+        <a class="create-review" href="{% url 'review_list:post_create' %}">Add a New Review</a>
+    </header>
+
+    <main class="page form-page">
+
+        <section class="form-section">
+            <div class="form-header"><h1>Movie Review✍🏻</h1></div>
+            <section>
+                <div class="form-content">
+                    <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button class="save-button" type="submit">Save</button>
+                    </form>
+                </div>
+            </section>
+        </section>
+        
+    </main>
+
+</body>
+</html>

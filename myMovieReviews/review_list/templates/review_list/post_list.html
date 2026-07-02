@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'review_list/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'review_list/style.css' %}">
+    <title>Moive Review List</title>
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-title" href="{% url 'review_list:post_list' %}" >MyMovieReviews🎬</a>
+    <a class="create-review" href="{% url 'review_list:post_create' %}">Add a New Review</a>
+  </header>
+
+  <main class="page">
+    <section class="review-list">
+      {% for post in posts %}
+    <div class="review-card">
+      <h2>
+        <a class= "list-title" href="{% url 'review_list:post_detail' post.pk %}">
+          {{ post.title }}
+        </a>
+      </h2>
+      <div class="list-content">
+
+        <p><strong>개봉 년도</strong>: {{ post.release_year }}</p>
+        <p><strong>장르</strong>: {{ post.genre }}</p>
+        <p><strong>별점</strong>: {{ post.rating }}</p>
+
+      </div>
+      
+    </div>
+  {% empty %}
+    <p>아직 작성한 리뷰가 없습니다.</p>
+  {% endfor %}
+
+
+    </section>
+  </main>
+</body>
+</html>
