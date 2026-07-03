@@ -1,0 +1,22 @@
+{% extends 'idea_site/base.html' %}
+
+{% block content %}
+<section class="idea-form-title">
+    {% if idea %}
+    <h1>Idea Detail Update</h1>
+    <p>아이디어 세부내용을 수정하세요.</p>
+    {% else %}
+    <h1>Idea Register</h1>
+    <p>아이디어 등록 페이지입니다. 당신의 아이디어를 기록하세요!</p>
+    {% endif %}
+</section>
+
+<form method="post" enctype="multipart/form-data" class="idea-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="form-actions">
+        <button type="submit">SUBMIT</button>
+    </div>
+</form>
+{% endblock %}

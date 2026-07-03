@@ -1,0 +1,104 @@
+{% extends 'idea_site/base.html' %}
+
+{% block content %}
+<section class="idea-detail-title">
+    <h1>Idea Detail</h1>
+    <p>아이디어 세부내용 페이지입니다. 당신이 구현하려는 아이디어를 자세히 살펴보세요.</p>
+</section>
+
+<div class="idea-detail-box">
+    <div class="idea-detail-image-wrap">
+        {% if idea.image %}
+            <img src="{{ idea.image.url }}" alt="{{ idea.title }}" class="idea-detail-image">
+        {% endif %}
+    </div>
+
+    <div class="idea-detail-info">
+        <h2>
+            {{ idea.title }}
+            <button type="button" class="detail-star-btn"
+                data-url="{% url 'idea_site:idea_star' idea.pk %}">
+                {% if is_starred %}
+                    ★
+                {% else %}
+                    ☆
+                {% endif %}
+            </button>
+        </h2>
+
+        <p>1. 아이디어 관심도</p>
+        <strong>{{ idea.interest }}</strong>
+
+        <p>2. 예상 개발 툴</p>
+        {% if idea.devtool %}
+            <a class="detail-devtool" href="{% url 'idea_site:devtool_detail' idea.devtool.pk %}">
+                {{ idea.devtool.name }}
+            </a>
+        {% else %}
+            <span>선택된 개발툴 없음</span>
+        {% endif %}
+
+        <p>3. 아이디어 설명</p>
+        <span>{{ idea.content }}</span>
+    </div>
+</div>
+
+<div class="detail-actions">
+    <form action="{% url 'idea_site:idea_delete' idea.pk %}" method="post">
+        {% csrf_token %}
+        <button class="btn-delete" type="submit">삭제</button>
+    </form>
+
+    <a class="btn-list" href="{% url 'idea_site:idea_list' %}">목록</a>
+    <a class="btn-revise" href="{% url 'idea_site:idea_update' idea.pk %}">수정</a>
+</div>
+
+
+<script>
+    const starButton = document.querySelector('.detail-star-btn');
+
+    if (starButton) {
+        starButton.addEventListener('click', () => {
+            const url = starButton.dataset.url;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+
+                return response.json();
+            })
+            .then(data => {
+                starButton.textContent = data.is_starred ? '★' : '☆';
+            });
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+
+        return cookieValue;
+    }
+</script>
+
+
+{% endblock %}

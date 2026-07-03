@@ -1,0 +1,140 @@
+{% extends 'idea_site/base.html' %}
+
+{% block content %}
+<section class="idea-list-title">
+    <h1>Idea List</h1>
+    <p>나의 아이디어를 관리하고 기록해보세요.</p>
+</section>
+
+<form method="get" class="form-sort">
+    <select name="sort" onchange="this.form.submit()">
+        <option value="latest" {% if sort == 'latest' %}selected{% endif %}>최신순</option>
+        <option value="old" {% if sort == 'old' %}selected{% endif %}>등록순</option>
+        <option value="name" {% if sort == 'name' %}selected{% endif %}>이름순</option>
+        <option value="interest" {% if sort == 'interest' %}selected{% endif %}>관심도순</option>
+        <option value="star" {% if sort == 'star' %}selected{% endif %}>찜하기순</option>
+    </select>
+</form>
+
+<div class="idea-grid">
+    {% for idea in ideas %}
+        <div class="idea-card">
+            <button type="button" class="star-btn"
+                data-url="{% url 'idea_site:idea_star' idea.pk %}">
+                {% if idea.id in starred_idea_ids %}
+                    ★
+                {% else %}
+                    ☆
+                {% endif %}
+            </button>
+
+            {% if idea.image %}
+                <img src="{{ idea.image.url }}" alt="{{ idea.title }}">
+            {% endif %}
+
+            <h2>
+                <a href="{% url 'idea_site:idea_detail' idea.pk %}">
+                    {{ idea.title }}
+                </a>
+            </h2>
+
+            <div class="card-line"></div>
+
+            <p>예상 개발 툴 : {{ idea.devtool }}</p>
+
+            <p class="interest-row">
+                아이디어 관심도 :
+                <button type="button" class="interest-btn"
+                    data-url="{% url 'idea_site:idea_interest' idea.pk %}"
+                    data-action="plus">
+                    +
+                </button>
+
+                <span id="interest-{{ idea.pk }}">{{ idea.interest }}</span>
+
+                <button type="button" class="interest-btn"
+                    data-url="{% url 'idea_site:idea_interest' idea.pk %}"
+                    data-action="minus">
+                    -
+                </button>
+            </p>
+        </div>
+    {% empty %}
+        <p>등록된 아이디어가 없습니다.</p>
+    {% endfor %}
+</div>
+
+<script>
+    const buttons = document.querySelectorAll('.interest-btn');
+
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const url = button.dataset.url;
+            const action = button.dataset.action;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=${action}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                const ideaId = url.split('/')[2];
+                const interestSpan = document.querySelector(`#interest-${ideaId}`);
+                interestSpan.textContent = data.interest;
+            });
+        });
+    });
+
+    // 찜하기
+    const starButtons = document.querySelectorAll('.star-btn');
+
+    starButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const url = button.dataset.url;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+
+                return response.json();
+            })
+            .then(data => {
+                button.textContent = data.is_starred ? '★' : '☆';
+            });
+        });
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+
+        return cookieValue;
+    }
+</script>
+
+
+
+{% endblock %}

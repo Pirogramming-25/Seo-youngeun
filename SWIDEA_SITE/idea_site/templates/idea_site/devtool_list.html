@@ -1,0 +1,26 @@
+{% extends 'idea_site/base.html' %}
+
+{% block content %}
+<section class="dev-list-title">
+    <h1>DevTool List</h1>
+    <p>개발툴 목록 페이지입니다. 자신이 사용 가능한 개발툴 목록을 확인해 보세요.</p>
+</section>
+
+<ul class="dev-list">
+    {% for devtool in devtools %}
+        <li class="dev-item">
+            <a class="devtool-name" href="{% url 'idea_site:devtool_detail' devtool.pk %}">
+                {{ devtool.name }}
+            </a>
+
+            <span class="devtool-kind">{{ devtool.kind }}</span>
+
+            <span class="devtool-content">
+                {{ devtool.content }}
+            </span>
+        </li>
+    {% empty %}
+        <li class="devtool-item">등록된 개발툴이 없습니다.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
