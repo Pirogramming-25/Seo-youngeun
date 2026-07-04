@@ -1,0 +1,41 @@
+{% extends 'idea_site/base.html' %}
+
+{% block content %}
+<section class="dev-detail-title">
+    <h1>DevTool Detail</h1>
+    <p>개발툴 세부내용 페이지입니다. 자신이 다룰 수 있는 개발툴에 대한 상세내용을 확인해 보세요.</p>
+</section>
+
+<div class="dev-detail-box">
+    <h2>{{ devtool.name }}</h2>
+
+    <div class="dev-content-detail">
+        <p class="dev-kind">{{ devtool.kind }}</p>
+        <p class="dev-content">{{ devtool.content }}</p>
+    </div>
+
+    <h3 class="dev-content-name">만들 수 있는 SW 목록</h3>
+
+    <div class="dev-idea-list">
+        {% for idea in devtool.ideas.all %}
+            <p>
+                <a href="{% url 'idea_site:idea_detail' idea.pk %}">
+                    {{ idea.title }}
+                </a>
+            </p>
+        {% empty %}
+            <p>이 개발툴을 사용하는 아이디어가 없습니다.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="detail-actions">
+    <form action="{% url 'idea_site:devtool_delete' devtool.pk %}" method="post">
+        {% csrf_token %}
+        <button class="btn-delete" type="submit">삭제</button>
+    </form>
+
+    <a class="btn-list" href="{% url 'idea_site:devtool_list' %}">목록</a>
+    <a class="btn-revise" href="{% url 'idea_site:devtool_update' devtool.pk %}">수정</a>
+</div>
+{% endblock %}
