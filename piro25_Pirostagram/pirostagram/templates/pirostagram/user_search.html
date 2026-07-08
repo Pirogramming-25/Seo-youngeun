@@ -1,0 +1,139 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'pirostagram/css/reset.css' %}">
+<link rel="stylesheet" href="{% static 'pirostagram/css/style.css' %}">
+
+<div class="layout">
+  <aside class="sidebar">
+    <h1 class="logo">Pirostagram</h1>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:feed' %}">
+      <img src="{% static 'pirostagram/images/home.png' %}" alt="">
+      <span>홈</span>
+    </a>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:user_search' %}">
+      <img src="{% static 'pirostagram/images/search.png' %}" alt="">
+      <span>유저 검색</span>
+    </a>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:post_create' %}">
+      <img src="{% static 'pirostagram/images/plus.png' %}" alt="">
+      <span>게시글 만들기</span>
+    </a>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:story_create' %}">
+      <img src="{% static 'pirostagram/images/plus.png' %}" alt="">
+      <span>스토리 만들기</span>
+    </a>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:user_profile' request.user.id %}">
+      <img src="{% static 'pirostagram/images/profile.png' %}" alt="">
+      <span>프로필</span>
+    </a>
+</aside>
+
+  <main class="main">
+    <section class="search-page">
+      <h1 class="search-logo">Pirostagram</h1>
+      <form method="GET" class="search-form">
+        <input
+          type="text"
+          name="q"
+          value="{{ query }}"
+          placeholder="아이디 또는 이름 검색"
+        >
+        <button type="submit">검색</button>
+      </form>
+
+      {% if query %}
+        <h2 class="search-result-title">"{{ query }}"로 검색한 결과</h2>
+      {% endif %}
+
+      <div class="user-list">
+        {% for user in users %}
+          <div class="user-card">
+            <a href="{% url 'pirostagram:user_profile' user.id %}" class="user-card-left">
+              <div class="user-avatar">
+                {% if user.profile.image %}
+                  <img src="{{ user.profile.image.url }}" alt="">
+                {% else %}
+                  {{ user.username|first|upper }}
+                {% endif %}
+              </div>
+
+              <div>
+                <strong>{{ user.username }}</strong>
+
+                {% if user.profile.name %}
+                  <p>{{ user.profile.name }}</p>
+                {% endif %}
+              </div>
+            </a>
+
+            <button
+              type="button"
+              class="follow-btn"
+              data-follow-url="{% url 'pirostagram:follow_toggle' user.id %}"
+            >
+              {% if user.id in following_ids %}
+                언팔로우
+              {% else %}
+                팔로우
+              {% endif %}
+            </button>
+          </div>
+        {% empty %}
+          {% if query %}
+            <p>검색 결과가 없습니다.</p>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <a class="search-home-link" href="{% url 'pirostagram:feed' %}">홈으로 돌아가기</a>
+    </section>
+  </main>
+</div>
+
+
+<script>
+function getCookie(name) {
+  let cookieValue = null;
+
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+
+  return cookieValue;
+}
+
+const csrftoken = getCookie("csrftoken");
+
+document.querySelectorAll(".follow-btn").forEach((button) => {
+  button.addEventListener("click", function () {
+    fetch(this.dataset.followUrl, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrftoken,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.is_following) {
+          this.textContent = "언팔로우";
+        } else {
+          this.textContent = "팔로우";
+        }
+      });
+  });
+});
+</script>

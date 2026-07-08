@@ -1,0 +1,62 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'pirostagram/css/reset.css' %}">
+<link rel="stylesheet" href="{% static 'pirostagram/css/style.css' %}">
+
+<div class="layout">
+  <aside class="sidebar">
+    <h1 class="logo">Pirostagram</h1>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:feed' %}">
+      <img src="{% static 'pirostagram/images/home.png' %}" alt="">
+      <span>홈</span>
+    </a>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:user_search' %}">
+      <img src="{% static 'pirostagram/images/search.png' %}" alt="">
+      <span>유저 검색</span>
+    </a>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:post_create' %}">
+      <img src="{% static 'pirostagram/images/plus.png' %}" alt="">
+      <span>게시글 만들기</span>
+    </a>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:story_create' %}">
+      <img src="{% static 'pirostagram/images/plus.png' %}" alt="">
+      <span>스토리 만들기</span>
+    </a>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:user_profile' request.user.id %}">
+      <img src="{% static 'pirostagram/images/profile.png' %}" alt="">
+      <span>프로필</span>
+    </a>
+</aside>
+
+  <main class="main form-main">
+    <section class="form-page">
+      <h1 class="page-title">
+        {% if post %}
+          게시글 수정
+        {% else %}
+          게시글 만들기
+        {% endif %}
+      </h1>
+
+      <form method="POST" enctype="multipart/form-data" class="piro-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="submit-btn">
+          {% if post %}
+            수정하기
+          {% else %}
+            올리기
+          {% endif %}
+        </button>
+      </form>
+
+      <a class="back-link" href="{% url 'pirostagram:feed' %}">홈으로</a>
+    </section>
+  </main>
+</div>

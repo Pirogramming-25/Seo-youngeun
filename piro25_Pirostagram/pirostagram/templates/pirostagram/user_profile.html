@@ -1,0 +1,146 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'pirostagram/css/reset.css' %}">
+<link rel="stylesheet" href="{% static 'pirostagram/css/style.css' %}">
+
+<div class="layout">
+  <aside class="sidebar">
+    <h1 class="logo">Pirostagram</h1>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:feed' %}">
+      <img src="{% static 'pirostagram/images/home.png' %}" alt="">
+      <span>홈</span>
+    </a>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:user_search' %}">
+      <img src="{% static 'pirostagram/images/search.png' %}" alt="">
+      <span>유저 검색</span>
+    </a>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:post_create' %}">
+      <img src="{% static 'pirostagram/images/plus.png' %}" alt="">
+      <span>게시글 만들기</span>
+    </a>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:story_create' %}">
+      <img src="{% static 'pirostagram/images/plus.png' %}" alt="">
+      <span>스토리 만들기</span>
+    </a>
+
+    <a class="sidebar-menu" href="{% url 'pirostagram:user_profile' request.user.id %}">
+      <img src="{% static 'pirostagram/images/profile.png' %}" alt="">
+      <span>프로필</span>
+    </a>
+  </aside>
+
+  <main class="main profile-main">
+  <section class="profile-page">
+    <div class="profile-header">
+      <div class="profile-image-wrap">
+        <div class="profile-image">
+          {% if profile_user.profile.image %}
+            <img src="{{ profile_user.profile.image.url }}" alt="">
+          {% else %}
+            {{ profile_user.username|first|upper }}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="profile-info">
+        <div class="profile-top">
+          <h1 class="profile-username">{{ profile_user.username }}</h1>
+
+          {% if profile_user != request.user %}
+            <button
+              type="button"
+              id="follow-btn"
+              data-follow-url="{% url 'pirostagram:follow_toggle' profile_user.id %}"
+            >
+              {% if is_following %}
+                언팔로우
+              {% else %}
+                팔로우
+              {% endif %}
+            </button>
+          {% endif %}
+        </div>
+
+        <div class="profile-counts">
+          <span>게시물 <strong>{{ posts|length }}</strong></span>
+          <span>팔로워 <strong id="follower-count">{{ follower_count }}</strong></span>
+          <span>팔로잉 <strong>{{ following_count }}</strong></span>
+        </div>
+
+        <div class="profile-bio">
+          {% if profile_user.profile.bio %}
+            {{ profile_user.profile.bio }}
+          {% else %}
+            소개글이 없습니다.
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-posts">
+      {% for post in posts %}
+        <div class="profile-post-card">
+          {% if post.image %}
+            <img src="{{ post.image.url }}" alt="">
+          {% endif %}
+        </div>
+      {% empty %}
+        <p class="profile-empty">아직 게시글이 없습니다.</p>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+</div>
+
+
+
+
+<script>
+function getCookie(name) {
+  let cookieValue = null;
+
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+
+  return cookieValue;
+}
+
+const csrftoken = getCookie("csrftoken");
+const followBtn = document.querySelector("#follow-btn");
+
+if (followBtn) {
+  followBtn.addEventListener("click", function () {
+    fetch(this.dataset.followUrl, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrftoken,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.is_following) {
+          followBtn.textContent = "언팔로우";
+        } else {
+          followBtn.textContent = "팔로우";
+        }
+
+        document.querySelector("#follower-count").textContent =
+          data.follower_count;
+      });
+  });
+}
+</script>
