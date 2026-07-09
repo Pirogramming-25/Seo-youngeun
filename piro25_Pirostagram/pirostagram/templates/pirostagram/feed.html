@@ -1,0 +1,429 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'pirostagram/css/reset.css' %}">
+<link rel="stylesheet" href="{% static 'pirostagram/css/style.css' %}">
+
+<div class="layout">
+  <aside class="sidebar">
+    <h1 class="logo">Pirostagram</h1>
+
+    <a href="{% url 'pirostagram:feed' %}" class="sidebar-menu">
+      <img src="{% static 'pirostagram/images/home.png' %}" alt="">
+      <span>홈</span>
+    </a>
+
+    <form class="sidebar-search" method="GET" action="{% url 'pirostagram:feed' %}">
+      <div class="sidebar-menu">
+        <img src="{% static 'pirostagram/images/search.png' %}" alt="">
+        <span>게시글 검색</span>
+      </div>
+      <input type="text" name="post_q">
+      <button type="submit">검색</button>
+    </form>
+
+    <form class="sidebar-search" method="GET" action="{% url 'pirostagram:user_search' %}">
+      <div class="sidebar-menu">
+        <img src="{% static 'pirostagram/images/search.png' %}" alt="">
+        <span>유저 검색</span>
+      </div>
+      <input type="text" name="q">
+      <button type="submit">검색</button>
+    </form>
+
+    <a href="{% url 'pirostagram:post_create' %}" class="sidebar-menu">
+      <img src="{% static 'pirostagram/images/plus.png' %}" alt="">
+      <span>게시글 만들기</span>
+    </a>
+
+    <a href="{% url 'pirostagram:user_profile' request.user.id %}" class="sidebar-menu">
+      <img src="{% static 'pirostagram/images/profile.png' %}" alt="">
+      <span>프로필</span>
+    </a>
+  </aside>
+
+  <main class="main">
+
+    <div class="story-list">
+      <a href="{% url 'pirostagram:story_create' %}" class="story-item">
+        <div class="story-add-circle">+</div>
+        <p class="story-username">스토리 +</p>
+      </a>
+
+      {% for story in stories %}
+        <div class="story-item">
+          {% for story_image in story.images.all %}
+            {% if forloop.first %}
+              <img
+                src="{{ story_image.image.url }}"
+                class="story-img"
+                data-story-id="{{ story.id }}"
+              >
+            {% endif %}
+
+            <input
+              type="hidden"
+              class="story-hidden-img"
+              data-story-id="{{ story.id }}"
+              value="{{ story_image.image.url }}"
+            >
+          {% endfor %}
+
+          <p class="story-username">{{ story.author.username }}</p>
+        </div>
+      {% empty %}
+        <p>아직 스토리가 없습니다.</p>
+      {% endfor %}
+    </div>
+
+    <hr>
+
+    {% csrf_token %}
+
+    {% for post in posts %}
+      <div class="insta-post">
+        <div class="post-header">
+          <div class="post-user">
+            <div class="post-avatar">
+              {% if post.author.profile.image %}
+                <img src="{{ post.author.profile.image.url }}" alt="">
+              {% else %}
+                {{ post.author.username|first|upper }}
+              {% endif %}
+            </div>
+
+            <div>
+              <strong>{{ post.author.username }}</strong>
+              
+            </div>
+          </div>
+
+          <div class="post-header-actions">
+            <a href="{% url 'pirostagram:post_update' post.id %}">수정</a>
+
+            <form method="POST" action="{% url 'pirostagram:post_delete' post.id %}">
+              {% csrf_token %}
+              <button type="submit">삭제</button>
+            </form>
+          </div>
+        </div>
+
+        {% if post.image %}
+          <img class="post-main-img" src="{{ post.image.url }}" alt="">
+        {% endif %}
+
+        <div class="post-actions">
+          <button
+            type="button"
+            class="like-btn icon-btn"
+            data-post-id="{{ post.id }}"
+            data-like-url="{% url 'pirostagram:post_like' post.id %}"
+          >
+            {% if request.user in post.likes.all %}
+              <img src="{% static 'pirostagram/images/heart-fill.png' %}" alt="좋아요">
+            {% else %}
+              <img src="{% static 'pirostagram/images/heart.png' %}" alt="좋아요">
+            {% endif %}
+          </button>
+
+          <button type="button" class="icon-btn comment-focus-btn" data-post-id="{{ post.id }}">
+            <img src="{% static 'pirostagram/images/comment.png' %}" alt="댓글">
+          </button>
+        </div>
+
+        <p class="post-like-text">
+          좋아요 <span id="like-count-{{ post.id }}">{{ post.likes.count }}</span>개
+        </p>
+
+        <p class="post-caption">
+          <strong>{{ post.author.username }}</strong>
+          {{ post.content }}
+        </p>
+
+        <div id="comments-{{ post.id }}" class="comments">
+          {% for comment in post.comments.all %}
+            <p id="comment-{{ comment.id }}" class="comment-row">
+              <span>
+                <strong>{{ comment.author.username }}</strong>
+                <span class="comment-content">{{ comment.content }}</span>
+              </span>
+
+              {% if comment.author == request.user %}
+                <span class="comment-actions">
+                  <button
+                    type="button"
+                    class="comment-update-btn"
+                    data-comment-id="{{ comment.id }}"
+                    data-update-url="{% url 'pirostagram:comment_update' comment.id %}"
+                  >
+                    수정
+                  </button>
+
+                  <button
+                    type="button"
+                    class="comment-delete-btn"
+                    data-comment-id="{{ comment.id }}"
+                    data-delete-url="{% url 'pirostagram:comment_delete' comment.id %}"
+                  >
+                    삭제
+                  </button>
+                </span>
+              {% endif %}
+            </p>
+          {% empty %}
+            <p id="no-comments-{{ post.id }}" class="no-comment">아직 댓글이 없습니다.</p>
+          {% endfor %}
+        </div>
+
+        <form
+          class="comment-form"
+          data-comment-url="{% url 'pirostagram:comment_create' post.id %}"
+          data-post-id="{{ post.id }}"
+        >
+          <input
+            id="comment-input-{{ post.id }}"
+            type="text"
+            name="content"
+            placeholder="댓글 달기"
+          >
+          <button type="submit">게시</button>
+        </form>
+      </div>
+    {% empty %}
+      <p>아직 게시글이 없습니다.</p>
+    {% endfor %}
+
+    <div id="story-modal">
+      <div>
+        <button type="button" id="story-close">X</button>
+        <button type="button" id="story-prev">‹</button>
+        <img id="story-modal-img" src="" width="500">
+        <button type="button" id="story-next">›</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+
+
+<script>
+function getCookie(name) {
+  let cookieValue = null;
+
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+
+  return cookieValue;
+}
+
+const csrftoken = getCookie("csrftoken");
+
+document.querySelectorAll(".like-btn").forEach((button) => {
+  button.addEventListener("click", function () {
+    const likeUrl = this.dataset.likeUrl;
+    const postId = this.dataset.postId;
+
+    fetch(likeUrl, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrftoken,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.liked) {
+          this.innerHTML = `<img src="/static/pirostagram/images/heart-fill.png" alt="좋아요">`;
+        } else {
+          this.innerHTML = `<img src="/static/pirostagram/images/heart.png" alt="좋아요">`;
+        }
+
+        document.querySelector(`#like-count-${postId}`).textContent =
+          data.like_count;
+      });
+  });
+});
+
+document.querySelectorAll(".comment-form").forEach((form) => {
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const commentUrl = this.dataset.commentUrl;
+    const postId = this.dataset.postId;
+    const input = this.querySelector("input[name='content']");
+    const content = input.value.trim();
+
+    if (!content) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("content", content);
+
+    fetch(commentUrl, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrftoken,
+      },
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const commentsBox = document.querySelector(`#comments-${postId}`);
+        const noComments = document.querySelector(`#no-comments-${postId}`);
+
+        if (noComments) {
+          noComments.remove();
+        }
+
+        const newComment = document.createElement("p");
+        newComment.id = `comment-${data.id}`;
+        newComment.innerHTML = `
+          <strong>${data.author}</strong>
+          <span class="comment-content">${data.content}</span>
+          <button
+            type="button"
+            class="comment-update-btn"
+            data-comment-id="${data.id}"
+            data-update-url="/comments/${data.id}/update/"
+          >
+            수정
+          </button>
+          <button
+            type="button"
+            class="comment-delete-btn"
+            data-comment-id="${data.id}"
+            data-delete-url="/comments/${data.id}/delete/"
+          >
+            삭제
+          </button>
+        `;
+
+        commentsBox.appendChild(newComment);
+        input.value = "";
+      });
+  });
+});
+
+
+document.addEventListener("click", function (event) {
+  if (event.target.classList.contains("comment-update-btn")) {
+    const button = event.target;
+    const commentId = button.dataset.commentId;
+    const updateUrl = button.dataset.updateUrl;
+    const commentElement = document.querySelector(`#comment-${commentId}`);
+    const contentSpan = commentElement.querySelector(".comment-content");
+
+    const newContent = prompt("댓글 수정", contentSpan.textContent);
+
+    if (!newContent || !newContent.trim()) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("content", newContent.trim());
+
+    fetch(updateUrl, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrftoken,
+      },
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        contentSpan.textContent = data.content;
+      });
+  }
+
+  if (event.target.classList.contains("comment-delete-btn")) {
+    const button = event.target;
+    const commentId = button.dataset.commentId;
+    const deleteUrl = button.dataset.deleteUrl;
+
+    fetch(deleteUrl, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrftoken,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.deleted) {
+          document.querySelector(`#comment-${commentId}`).remove();
+        }
+      });
+  }
+});
+
+const storyImages = Array.from(document.querySelectorAll(".story-img"));
+const storyModal = document.querySelector("#story-modal");
+const storyModalImg = document.querySelector("#story-modal-img");
+const storyClose = document.querySelector("#story-close");
+const storyPrev = document.querySelector("#story-prev");
+const storyNext = document.querySelector("#story-next");
+
+let currentStoryImages = [];
+let currentStoryIndex = 0;
+
+storyImages.forEach((img) => {
+  img.addEventListener("click", function () {
+    const storyId = this.dataset.storyId;
+
+    currentStoryImages = Array.from(document.querySelectorAll(".story-hidden-img"))
+      .filter((image) => image.dataset.storyId === storyId)
+      .map((image) => image.value);
+
+    currentStoryIndex = 0;
+
+    storyModalImg.src = currentStoryImages[currentStoryIndex];
+    storyModal.style.display = "flex";
+  });
+});
+
+storyClose.addEventListener("click", function () {
+  storyModal.style.display = "none";
+});
+
+storyPrev.addEventListener("click", function () {
+  if (currentStoryImages.length === 0) return;
+
+  currentStoryIndex =
+    (currentStoryIndex - 1 + currentStoryImages.length) %
+    currentStoryImages.length;
+
+  storyModalImg.src = currentStoryImages[currentStoryIndex];
+});
+
+storyNext.addEventListener("click", function () {
+  if (currentStoryImages.length === 0) return;
+
+  currentStoryIndex =
+    (currentStoryIndex + 1) % currentStoryImages.length;
+
+  storyModalImg.src = currentStoryImages[currentStoryIndex];
+});
+
+document.querySelectorAll(".comment-focus-btn").forEach((button) => {
+  button.addEventListener("click", function () {
+    const postId = this.dataset.postId;
+    const input = document.querySelector(`#comment-input-${postId}`);
+
+    if (input) {
+      input.focus();
+    }
+  });
+});
+
+</script>
+
+
