@@ -1,0 +1,9 @@
+services:
+  web:
+    build: .
+    image: bbang0eun/pirostagram:latest
+    container_name: pirostagram-web
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./media:/app/media
