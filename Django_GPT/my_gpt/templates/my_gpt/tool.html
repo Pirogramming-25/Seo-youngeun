@@ -1,0 +1,54 @@
+{% extends "my_gpt/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Django GPT{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <p class="eyebrow">Hugging Face AI</p>
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+  </section>
+
+  <section class="card info">
+    <div><b>사용 모델</b><code>{{ model_id }}</code></div>
+    <div><b>입력 언어</b><span>영어</span></div>
+  </section>
+
+  <section class="card">
+    <form id="ai-form" data-endpoint="{{ run_url }}" data-task="{{ active_tab }}">
+      {% csrf_token %}
+      <label for="text-input">분석할 텍스트</label>
+      <textarea id="text-input" maxlength="{{ max_length }}" placeholder="{{ placeholder }}" required></textarea>
+      <div class="form-row">
+        <span id="counter">0 / {{ max_length }}자</span>
+        <button id="run-button" type="submit">{{ button_text }}</button>
+      </div>
+    </form>
+    <p id="loading" class="loading" hidden>처리 중...</p>
+    <div id="error" class="alert error" role="alert" hidden></div>
+    <section id="result" class="result" aria-live="polite" hidden>
+      <h2>결과</h2>
+      <div id="result-content"></div>
+    </section>
+  </section>
+
+  <section class="card">
+    <h2>최근 실행 기록</h2>
+    <ol id="history-list">
+      {% for item in histories %}
+        <li>
+          <time>{{ item.created_at|date:"Y-m-d H:i" }}</time>
+          <p>{{ item.input_text|truncatechars:90 }}</p>
+          <strong>{{ item.output_text|truncatechars:160 }}</strong>
+        </li>
+      {% empty %}
+        <li class="empty">아직 실행 기록이 없습니다.</li>
+      {% endfor %}
+    </ol>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static script_name %}"></script>
+{% endblock %}
